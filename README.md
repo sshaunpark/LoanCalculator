@@ -11,6 +11,8 @@ Assumptions / Comments
  - Outstanding_Balance is not used in the spreadsheet. Although it is included as a required parameter in the Loan class 
    constructor, it is not used in any of the calculations.
 
+ - Earnout CF is assumed to happen when Month is 13 or 19, as shown in the spreadsheet.
+
  - Percentage values, including the recovery rate which is represented as a decimal in the spreadsheet, are stored and 
    processed as numbers (e.g., 3.5 for 3.5%) in both storage and method parameters, not as 0.035.
 
