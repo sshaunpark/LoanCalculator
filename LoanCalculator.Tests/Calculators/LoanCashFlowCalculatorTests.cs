@@ -8,10 +8,13 @@ namespace LoanCalculator.Tests.Calculators
 {
     public class LoanCashFlowCalculatorTests
     {
-        [Fact]
-        public void GenerateLoanCashFlows_ReturnsExpectedNumberOfCashFlows()
+        private readonly Mock<IDataProvider> mockDataProvider;
+        private readonly Loan loan;
+        private readonly LoanCashFlowCalculator calculator;
+
+        public LoanCashFlowCalculatorTests()
         {
-            var mockDataProvider = new Mock<IDataProvider>();
+            mockDataProvider = new Mock<IDataProvider>();
             mockDataProvider.Setup(p => p.GetPrepaymentSpeed(It.IsAny<int>())).Returns(new List<decimal> {   
                 0.00000000000000m, 2.47157630951048m, 2.30786643671328m,
                 2.23212840797203m, 2.24436222328672m, 2.34456788265734m,
@@ -25,7 +28,7 @@ namespace LoanCalculator.Tests.Calculators
                 0.11855529132995m, 0.07738482583438m, 0.00000000000000m,
                 0.00000000000000m});
 
-            var loan = new Loan(
+            loan = new Loan(
                 grade: "B1",
                 issueDate: DateTime.Now,
                 term: 12,
@@ -37,11 +40,22 @@ namespace LoanCalculator.Tests.Calculators
                 servicingFee: 1.0m,
                 earnoutFee: 1.0m);
 
-            var calculator = new LoanCashFlowCalculator(mockDataProvider.Object);
-            var result = calculator.GenerateLoanCashFlows(loan);
+            calculator = new LoanCashFlowCalculator(mockDataProvider.Object);
+        }
 
+        [Fact]
+        public void GenerateLoanCashFlows_ReturnsExpectedNumberOfCashFlows()
+        {
+            var result = calculator.GenerateLoanCashFlows(loan);
             Assert.NotNull(result);
             Assert.Equal(loan.Term + 1, result.Count);
+        }
+
+        [Fact]
+        public void GenerateLoanCashFlows_ValidatesSelectedCashFlows()
+        {
+            var result = calculator.GenerateLoanCashFlows(loan);
+            Assert.NotNull(result);
             // check three random data points
             Assert.Equal(1005.3936m, result[1].Principal, precision: 4);
             Assert.Equal(162.4081m, result[3].Prepay, precision: 4);
